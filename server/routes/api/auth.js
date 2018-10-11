@@ -1,8 +1,16 @@
-const express = require('express');
-const mongodb = require('mongodb');
-const bcrypt = require('bcryptjs');
+const express = require('express')
+const mongodb = require('mongodb')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
+const authConfig = require('../../config/auth')
 
 const router = express.Router();
+
+function generateToken(params = {}) {
+    return jwt.sign(params, authConfig.secret, {
+        expiresIn: 86400,
+    });
+}
 
 router.get('/', async (req, res) => {
     const users = await loadUsers();
@@ -20,13 +28,14 @@ router.post('/register', async (req, res) => {
 
         await user.insertOne({
             email: req.body.email,
-            password: senha
+            password: senha,
+            token: generateToken({ id: user.id })
         })
         res.status(201).send('Cadastro realizado com sucesso!');
     } catch (err) {
         return res.status(400).send({ error: 'Registration failed!' });
     }
-});
+})
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -43,14 +52,14 @@ router.post('/login', async (req, res) => {
     login.password = undefined;
 
     res.send({
-        login,
-    });
-});
+        login
+    })
+})
 
 async function loadUsers() {
     const client = await mongodb.MongoClient.connect('mongodb://moon:moon00@ds239681.mlab.com:39681/moon', {
         useNewUrlParser: true
-    });
+    })
 
     return client.db('moon').collection('users');
 }

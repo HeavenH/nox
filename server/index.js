@@ -8,10 +8,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const posts = require('./routes/api/posts');
+const chall = require('./routes/api/chall');
 const auth = require('./routes/api/auth');
 
-app.use('/api/posts', posts)
+app.use('/api/challs', chall)
 app.use('/api/users', auth)
 
 // Handle production
