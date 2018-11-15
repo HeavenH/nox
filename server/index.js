@@ -11,7 +11,7 @@ app.use(cors());
 const chall = require('./routes/api/chall');
 const auth = require('./routes/api/auth');
 
-app.use('/api/challs', chall)
+app.use('/api/keys', chall)
 app.use('/api/users', auth)
 
 // Handle production
